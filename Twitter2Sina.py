@@ -7,9 +7,12 @@ from google.appengine.ext import db;
 from google.appengine.api import urlfetch
 from BasicAuthUpdate import SinaWeibo
 from weibopy.error import WeibopError
+
+
 class SinceID(db.Model):
     value = db.StringProperty();
 
+    
 def getXmlInTwitter(username,since_id=""):
     xmlUrl = "http://twitter.com/statuses/user_timeline/"+ username + ".xml";
     if since_id != "":
@@ -18,7 +21,11 @@ def getXmlInTwitter(username,since_id=""):
     req = urllib2.Request(xmlUrl);
     return opener.open(req).read();
 
+    
+def filterMsg(message):
+    return message.find("@") != 0;
 
+    
 def synchronousMsg(twitterUsername, sinaUsername, sinaPassword):
     sinceID = SinceID.get_or_insert("since_id",value="");
     logging.debug(sinceID.value);
@@ -32,7 +39,7 @@ def synchronousMsg(twitterUsername, sinaUsername, sinaPassword):
         tID = node.find("id");
         txt = tContent.text.encode("utf-8");
         logging.debug(txt);
-        if txt.find("@") == -1:
+        if filterMsg(txt):
             if initialized != 1:
                 weibo.basicAuth('<app_key>', sinaUsername, sinaPassword);
                 initialized = 1;
@@ -47,6 +54,8 @@ def synchronousMsg(twitterUsername, sinaUsername, sinaPassword):
                     raise;
         sinceID.value = tID.text.encode("utf-8");
         sinceID.put();
+
+
 #========================================================
 logging.getLogger().setLevel(logging.ERROR);
 synchronousMsg(twitterUsername="<user>", sinaUsername="<user>", sinaPassword="<pw>");
