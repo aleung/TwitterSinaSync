@@ -1,0 +1,5 @@
+cron:
+- description: twitter to sina miniblog
+  url: /twitter.py
+  schedule: every 10 minutes
+
