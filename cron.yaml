@@ -1,5 +1,5 @@
 cron:
 - description: twitter to sina miniblog
-  url: /twitter.py
+  url: /sync
   schedule: every 10 minutes
 
