@@ -1,4 +1,12 @@
+History
+=======
+2.1   Bug fix
+2.0   Support multiple users. Sina API authentication with OAuth.
+1.0   Original version from @cutemic
+
+
 How to install
+==============
 - Register an application on https://appengine.google.com/
 - Set applicaiton id in app.yaml
 - Register an application on http://open.t.sina.com.cn/
