@@ -20,10 +20,10 @@ class SinaWeibo:
             print e
             return ''
                
-    def basicAuth(self, source, username, password):
-        self.authType = 'basicauth'
-        self.auth = BasicAuthHandler(username, password)
-        self.api = API(self.auth,source=source)
+    def auth(self, consumer_key, consumer_secret, access_key, access_secret):
+        self.auth = OAuthHandler(consumer_key, consumer_secret)
+        self.auth.set_access_token(access_key, access_secret)
+        self.api = API(self.auth)
     
     def update(self, message):
         status = self.api.update_status(status=message)

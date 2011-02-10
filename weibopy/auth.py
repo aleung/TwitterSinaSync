@@ -66,16 +66,13 @@ class OAuthHandler(AuthHandler):
         headers.update(request.to_header())
 
     def _get_request_token(self):
-        try:
-            url = self._get_oauth_url('request_token')
-            request = oauth.OAuthRequest.from_consumer_and_token(
-                self._consumer, http_url=url, callback=self.callback
-            )
-            request.sign_request(self._sigmethod, self._consumer, None)
-            resp = urlopen(Request(url, headers=request.to_header()))
-            return oauth.OAuthToken.from_string(resp.read())
-        except Exception, e:
-            raise WeibopError(e)
+        url = self._get_oauth_url('request_token')
+        request = oauth.OAuthRequest.from_consumer_and_token(
+            self._consumer, http_url=url, callback=self.callback
+        )
+        request.sign_request(self._sigmethod, self._consumer, None)
+        resp = urlopen(Request(url, headers=request.to_header()))
+        return oauth.OAuthToken.from_string(resp.read())
 
     def set_request_token(self, key, secret):
         self.request_token = oauth.OAuthToken(key, secret)
@@ -85,22 +82,19 @@ class OAuthHandler(AuthHandler):
 
     def get_authorization_url(self, signin_with_twitter=False):
         """Get the authorization URL to redirect the user"""
-        try:
-            # get the request token
-            self.request_token = self._get_request_token()
+        # get the request token
+        self.request_token = self._get_request_token()
 
-            # build auth request and return as url
-            if signin_with_twitter:
-                url = self._get_oauth_url('authenticate')
-            else:
-                url = self._get_oauth_url('authorize')
-            request = oauth.OAuthRequest.from_token_and_callback(
-                token=self.request_token, http_url=url
-            )
+        # build auth request and return as url
+        if signin_with_twitter:
+            url = self._get_oauth_url('authenticate')
+        else:
+            url = self._get_oauth_url('authorize')
+        request = oauth.OAuthRequest.from_token_and_callback(
+            token=self.request_token, http_url=url
+        )
 
-            return request.to_url()
-        except Exception, e:
-            raise WeibopError(e)
+        return request.to_url()
 
     def get_access_token(self, verifier=None):
         """
@@ -127,10 +121,7 @@ class OAuthHandler(AuthHandler):
             
             return self.access_token
         except Exception, e:
-            raise WeibopError(e)
-        
-    def setToken(self, token, tokenSecret):
-        self.access_token = oauth.OAuthToken(token, tokenSecret)
+            raise WeibopError(str(e))
         
     def get_username(self):
         if self.username is None:

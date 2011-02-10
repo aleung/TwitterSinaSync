@@ -4,6 +4,11 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /twitter(.*)
-  script: Twitter2Sina.py
-
+- url: /
+  static_files: index.html
+  upload: index.html
+- url: /admin/(.*)
+  script: main.py
+  login: admin
+- url: /(.*)
+  script: main.py
