@@ -57,8 +57,8 @@ class RegisterHandler(webapp.RequestHandler):
             return
         auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
         
-        verifier = self.request.get("oauth_verifier")
-        twitterId = self.request.get("twitter_id")
+        verifier = self.request.get("oauth_verifier").strip()
+        twitterId = self.request.get("twitter_id").strip()
         if verifier == "" or twitterId == "":
             authUrl = auth.get_authorization_url()
             success_output(self, page_goto_sina_oauth % \
