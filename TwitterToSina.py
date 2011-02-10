@@ -41,8 +41,9 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
                 count += 1
             except WeibopError, e:
                 # ignore "repeated weibo text" error
-                if e.reason.find("40025") != -1 or e.reason.find("40028") != -1:
+                if e.reason.find("40025") == -1 and e.reason.find("40028") == -1:
                     raise;
+                logging.info("Error ignored: " + e.reason)
         binding.lastTweetId = tID;
         binding.put();
         if count >= limit:
