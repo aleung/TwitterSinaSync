@@ -1,0 +1,6 @@
+How to install
+- Register an application on https://appengine.google.com/
+- Set applicaiton id in app.yaml
+- Register an application on http://open.t.sina.com.cn/
+- Set App Key and App Secret in main.py
+- Upload to google app engine
