@@ -1,6 +1,6 @@
 import urllib2;
 import logging;
-import sys;
+import sys, time, random
 
 from xml.etree import ElementTree;
 from google.appengine.ext import db;
@@ -46,15 +46,17 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
         binding.lastTweetId = tID;
         binding.put();
         if count >= limit:
-            return
+            break
+    return count
 
 def syncAll(CONSUMER_KEY, CONSUMER_SECRET):
     bindings = SyncBinding.all()
     bindings.order("nextSyncTime")
     for binding in bindings:
-        if binding.nextSyncTime > time():
+        if binding.nextSyncTime > time.time():
             return
         logging.debug("Synchronous tweets from @" + binding.twitterId);
-        synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding);
-        binding.nextSyncTime = time() + 60*10 + random()*60*5 # set next sync to 10~15 minutes later
+        numberSynced = synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding);
+        binding.nextSyncTime = time.time() + 60*(10+5*random.random()) - numberSynced*60*2
+        logging.info("Twitter ID: %s, next sync: %f" % (binding.twitterId, binding.nextSyncTime))
         binding.put()
