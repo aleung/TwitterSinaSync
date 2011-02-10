@@ -51,7 +51,12 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
             return
 
 def syncAll(CONSUMER_KEY, CONSUMER_SECRET):
-    bindings = SyncBinding.all();
+    bindings = SyncBinding.all()
+    bindings.order("nextSyncTime")
     for binding in bindings:
+        if binding.nextSyncTime > time():
+            return
         logging.debug("Synchronous tweets from @" + binding.twitterId);
         synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding);
+        binding.nextSyncTime = time() + 60*10 + random()*60*5 # set next sync to 10~15 minutes later
+        binding.put()

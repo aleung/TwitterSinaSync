@@ -6,6 +6,7 @@ class SyncBinding(db.Model):
     invitationCode = db.StringProperty()
     sinaAccessToken = db.StringProperty()
     sinaAccessSecret = db.StringProperty()
+    nextSyncTime = db.FloatProperty()
     
 class InvititionCode(db.Model):
     code = db.StringProperty()
