@@ -8,5 +8,14 @@ class SyncBinding(db.Model):
     sinaAccessSecret = db.StringProperty()
     nextSyncTime = db.FloatProperty()
     
+    @staticmethod
+    def getOrInsertByInvitationCode(code):
+        query = SyncBinding().all()
+        query.filter("invitationCode", code)
+        binding = query.get()
+        if binding == None:
+            binding = SyncBinding(invitationCode = code)
+        return binding
+    
 class InvititionCode(db.Model):
     code = db.StringProperty()
