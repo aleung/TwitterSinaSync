@@ -71,17 +71,22 @@ class RegisterHandler(webapp.RequestHandler):
             request_secret = self.request.get("request_secret")
             auth.set_request_token(request_token, request_secret)
             accessToken = auth.get_access_token(verifier)
-            binding = SyncBinding()
+            binding = SyncBinding.getOrInsertByInvitationCode(invitationCode)
+            binding.lastTweetId = None
             binding.twitterId = twitterId
-            binding.invitationCode = invitationCode
             binding.sinaAccessToken = accessToken.key
             binding.sinaAccessSecret = accessToken.secret
             binding.put()
-            success_output(self, "<html><body>Twitter与新浪微博同步绑定成功</body></html>")
+            success_output(self, '''
+<html><body>
+<p>Twitter与新浪微博同步绑定成功</p>
+<p>如需要修改绑定，请重新访问邀请链接</p>
+</body></html>
+            ''')
 
     def isValidInvitationCode(self, code):
         query = InvititionCode.all()
-        query.filter("code =", code)
+        query.filter("code", code)
         return query.count(1) > 0
 
 class BindingListHandler(webapp.RequestHandler):

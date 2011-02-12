@@ -1,5 +1,6 @@
 History
 =======
+2.2   Bug fix: [1] [2]
 2.1   Bug fix
 2.0   Support multiple users. Sina API authentication with OAuth.
 1.0   Original version from @cutemic
