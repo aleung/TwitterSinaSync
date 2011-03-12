@@ -1,5 +1,8 @@
 History
 =======
+2.3   Remove binding of user who has revoked access privilege to this app.
+      Temporary disable synchronization for user who is black listed by Sina.
+      Show next sync time in binding list (/admin/bindings)
 2.2   Bug fix: [1] [2]
 2.1   Bug fix
 2.0   Support multiple users. Sina API authentication with OAuth.
@@ -9,7 +12,9 @@ History
 How to install
 ==============
 - Register an application on https://appengine.google.com/
+- Copy app.yaml.template to app.yaml
 - Set applicaiton id in app.yaml
 - Register an application on http://open.t.sina.com.cn/
-- Set App Key and App Secret in main.py
+- Copy properties.ini.template to properties.ini
+- Set App Key and App Secret in properties.ini
 - Upload to google app engine

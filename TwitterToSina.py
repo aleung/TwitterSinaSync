@@ -24,6 +24,7 @@ def filterMsg(message):
 
     
 def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
+    logging.debug("Synchronous tweets from @" + binding.twitterId);
     weibo = SinaWeibo();  
     text = getXmlInTwitter(binding.twitterId, binding.lastTweetId);
     root = ElementTree.fromstring(text);
@@ -40,15 +41,31 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
                 weibo.update(txt);
                 count += 1
             except WeibopError, e:
+                # handle error: user has revoked access privilege to this application
+                if e.reason.find("40072") != -1:
+                    logging.info("Delete binding, because user has revoked access privilege for this application from Sina: " + e.reason);
+                    binding.delete()
+                    return
+                # 40028 indicates that the tweet is duplicated or user is in black list
+                if e.reason.find("40028") != -1:
+                    logging.info("User is in black list? Skip this tweet and temporary disable sync for 1 hour. " + e.reason)
+                    binding.nextSyncTime = time.time() + 3600
+                    binding.lastTweetId = tID
+                    binding.put()
+                    return
                 # ignore "repeated weibo text" error
-                if e.reason.find("40025") == -1 and e.reason.find("40028") == -1:
-                    raise;
-                logging.info("Error ignored: " + e.reason)
+                if e.reason.find("40025") != -1:
+                    logging.info("Error ignored: " + e.reason)
+                    break
+                # other error
+                raise
         binding.lastTweetId = tID;
         binding.put();
         if count >= limit:
             break
-    return count
+    binding.nextSyncTime = time.time() + 60*(10+5*random.random()) - count*60*2
+    binding.put();
+    logging.info("Twitter ID: %s, next sync: %f" % (binding.twitterId, binding.nextSyncTime))
 
 def syncAll(CONSUMER_KEY, CONSUMER_SECRET):
     bindings = SyncBinding.all()
@@ -56,8 +73,4 @@ def syncAll(CONSUMER_KEY, CONSUMER_SECRET):
     for binding in bindings:
         if binding.nextSyncTime > time.time():
             return
-        logging.debug("Synchronous tweets from @" + binding.twitterId);
-        numberSynced = synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding);
-        binding.nextSyncTime = time.time() + 60*(10+5*random.random()) - numberSynced*60*2
-        logging.info("Twitter ID: %s, next sync: %f" % (binding.twitterId, binding.nextSyncTime))
-        binding.put()
+        synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding);

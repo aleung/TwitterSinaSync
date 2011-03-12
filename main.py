@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import wsgiref.handlers, logging, random, string
+import wsgiref.handlers, logging, random, string, time
 from google.appengine.ext import webapp
 from weibopy.auth import OAuthHandler
 from db import SyncBinding, InvititionCode
 from TwitterToSina import syncAll
+from ConfigParser import ConfigParser
 
-# --- Update following -------------
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
-# ----------------------------------
-
+""" process properties file """
+cfg = ConfigParser()
+cfg.read("properties.ini")
+CONSUMER_KEY = cfg.get("sina", "CONSUMER_KEY")
+CONSUMER_SECRET = cfg.get("sina", "CONSUMER_SECRET")
     
 page_goto_sina_oauth = """
 <html>
@@ -93,13 +94,14 @@ class BindingListHandler(webapp.RequestHandler):
     def get(self):
         content = """
 <html><body><table border="1">
-<tr><th>Invatation Code</th><th>Twitter ID</th><th>Last synced tweet</th>
+<tr><th>Invatation Code</th><th>Twitter ID</th><th>Last synced tweet</th><th>Next sync(GMT)</th>
 <th>Sina token</th><th>Sina secret</th></tr>
             """
         bindings = SyncBinding.all()
         for binding in bindings:
-            content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % \
+            content += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % \
                 (binding.invitationCode, binding.twitterId, binding.lastTweetId, 
+                 time.ctime(binding.nextSyncTime),
                  binding.sinaAccessToken, binding.sinaAccessSecret)
         content += "</table></body></html>"
         success_output(self, content)

@@ -1,0 +1,5 @@
+# Copy this file to prperties.ini and set your properties
+
+[sina]
+CONSUMER_KEY = your-sina-api-key
+CONSUMER_SECRET = your-sina-api-secret
