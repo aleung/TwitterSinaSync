@@ -5,12 +5,13 @@ from google.appengine.ext import webapp
 from weibopy.auth import OAuthHandler
 from db import SyncBinding, InvititionCode
 from TwitterToSina import syncAll
+from ConfigParser import ConfigParser
 
-# --- Update following -------------
-CONSUMER_KEY = ''
-CONSUMER_SECRET = ''
-# ----------------------------------
-
+""" process properties file """
+cfg = ConfigParser()
+cfg.read("properties.ini")
+CONSUMER_KEY = cfg.get("sina", "CONSUMER_KEY")
+CONSUMER_SECRET = cfg.get("sina", "CONSUMER_SECRET")
     
 page_goto_sina_oauth = """
 <html>

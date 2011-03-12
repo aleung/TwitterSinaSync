@@ -18,5 +18,7 @@ pip-log.txt
 .coverage
 .tox
 
-# Private folder
+# Private folder/files
 private
+app.yaml
+properties.ini

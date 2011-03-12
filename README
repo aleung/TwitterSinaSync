@@ -9,7 +9,9 @@ History
 How to install
 ==============
 - Register an application on https://appengine.google.com/
+- Copy app.yaml.template to app.yaml
 - Set applicaiton id in app.yaml
 - Register an application on http://open.t.sina.com.cn/
-- Set App Key and App Secret in main.py
+- Copy properties.ini.template to properties.ini
+- Set App Key and App Secret in properties.ini
 - Upload to google app engine
