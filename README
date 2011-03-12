@@ -1,5 +1,8 @@
 History
 =======
+2.3   Remove binding of user who has revoked access privilege to this app.
+      Temporary disable synchronization for user who is black listed by Sina.
+      Show next sync time in binding list (/admin/bindings)
 2.2   Bug fix: [1] [2]
 2.1   Bug fix
 2.0   Support multiple users. Sina API authentication with OAuth.
