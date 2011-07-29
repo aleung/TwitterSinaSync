@@ -1,5 +1,7 @@
 History
 =======
+2.5   Bug fix: [4]
+      Log error response from twitter (for debug)
 2.4   Bug fix: [1] (Caused by 2.3 change)
 2.3   Remove binding of user who has revoked access privilege to this app.
       Temporary disable synchronization for user who is black listed by Sina.
