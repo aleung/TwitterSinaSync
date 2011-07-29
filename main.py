@@ -31,7 +31,7 @@ Twitter ID：<input type="text" name="twitter_id" />
     """    
 
 def success_output(handler, content, content_type='text/html'):
-    handler.response.status = '200 OK'
+    handler.response.set_status(200)
     handler.response.headers.add_header('Content-Type', content_type)
     handler.response.out.write(content)
 
