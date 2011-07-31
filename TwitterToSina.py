@@ -16,7 +16,14 @@ def getXmlInTwitter(username,since_id=""):
         xmlUrl += "?since_id=" + since_id;
     opener = urllib2.build_opener();
     req = urllib2.Request(xmlUrl);
-    return opener.open(req).read();
+    try:
+        return opener.open(req).read()
+    except urllib2.HTTPError, error:
+        logging.error("Got error response from twitter:\n" + error.read())
+        logging.debug("RateLimit-Limit=" + error.info()['X-RateLimit-Limit'])
+        logging.debug("RateLimit-Remaining=" + error.info()['X-RateLimit-Remaining'])
+        logging.debug("RateLimit-Reset=" + error.info()['X-RateLimit-Reset'])
+        raise
 
     
 def filterMsg(message):
