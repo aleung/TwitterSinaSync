@@ -1,5 +1,6 @@
 History
 =======
+2.6   Bug fix: [6] [7]
 2.5   Bug fix: [4]
       Log error response from twitter (for debug)
 2.4   Bug fix: [1] (Caused by 2.3 change)

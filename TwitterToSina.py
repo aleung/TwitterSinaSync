@@ -1,6 +1,7 @@
-import urllib2;
-import logging;
+import urllib2
+import logging
 import sys, time, random
+import tweet
 
 from xml.etree import ElementTree;
 from google.appengine.ext import db;
@@ -29,7 +30,7 @@ def getXmlInTwitter(username,since_id=""):
 def filterMsg(message):
     return message.find("@") != 0;
 
-    
+
 def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
     logging.debug("Synchronous tweets from @" + binding.twitterId);
     weibo = SinaWeibo();  
@@ -41,6 +42,7 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
     	txt = node.find("text").text.encode("utf-8");
         tID = node.find("id").text.encode("utf-8");
         if filterMsg(txt):
+            txt = tweet.expand_url_in_tweet(txt)
             logging.info("Sync tweet [%s]: %s" % (tID, txt));
             if not hasattr(weibo, "api"):
                 weibo.auth(CONSUMER_KEY, CONSUMER_SECRET, binding.sinaAccessToken, binding.sinaAccessSecret);
@@ -53,9 +55,10 @@ def synchronousMsg(CONSUMER_KEY, CONSUMER_SECRET, binding, limit=5):
                     logging.info("Delete binding, because user has revoked access privilege for this application from Sina: " + e.reason);
                     binding.delete()
                     return
-                # 40028 indicates that the tweet is duplicated or user is in black list
-                if e.reason.find("40028") != -1:
-                    logging.info("User is in black list? Skip this tweet and temporary disable sync for 1 hour. " + e.reason)
+                # 40028: the tweet is duplicated or user is in black list
+                # 40092: link contains illegal website
+                if e.reason.find("40028") != -1 or e.reason.find("40092") != -1:
+                    logging.info("Tweet is censored. Skip this tweet and temporary disable sync for 1 hour. " + e.reason)
                     binding.nextSyncTime = time.time() + 3600
                     binding.lastTweetId = tID
                     binding.put()
